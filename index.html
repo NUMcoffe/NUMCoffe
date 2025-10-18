@@ -3,200 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NUM Coffee</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Form Pesanan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f2f2f2;
+    }
+    form {
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    input, textarea, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <!-- ========== HALAMAN ATAS (HERO) ========== -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>NUM COFFEE</h1>
-      <p>Dare to Brew Different</p>
-      <a href="#menu" class="btn">Order Now</a>
-    </div>
-  </section>
 
-  <!-- ========== MENU & FORM PEMESANAN ========== -->
-  <section id="menu" class="menu-layout">
-    <!-- Menu Kiri -->
-    <div class="menu-column">
-      <h2>MENU MINUMAN</h2>
+  <h2>Form Pemesanan</h2>
+  <form id="formPesanan">
+    <input type="text" id="nama" placeholder="Nama" required>
+    <input type="text" id="alamat" placeholder="Alamat" required>
+    <textarea id="pesanan" placeholder="Pesanan (pisahkan dengan koma)" required></textarea>
+    <input type="number" id="total" placeholder="Total Harga" required>
+    <button type="submit">Kirim Pesanan</button>
+  </form>
 
-      <!-- Espresso -->
-      <div class="menu-item">
-        <h3>Espresso</h3>
-        <div>
-          <select id="suhu-espresso" onchange="updatePrice('espresso')">
-            <option value="panas">Panas</option>
-            <option value="dingin">Dingin</option>
-          </select>
-          <span id="harga-espresso">Rp 18.000</span>
-        </div>
-        <button onclick="addOrder('Espresso', getPrice('espresso'), getTemp('suhu-espresso'))">Pesan</button>
-      </div>
-
-      <!-- Latte -->
-      <div class="menu-item">
-        <h3>Latte</h3>
-        <div>
-          <select id="suhu-latte" onchange="updatePrice('latte')">
-            <option value="panas">Panas</option>
-            <option value="dingin">Dingin</option>
-          </select>
-          <span id="harga-latte">Rp 25.000</span>
-        </div>
-        <button onclick="addOrder('Latte', getPrice('latte'), getTemp('suhu-latte'))">Pesan</button>
-      </div>
-
-      <!-- Cappuccino -->
-      <div class="menu-item">
-        <h3>Cappuccino</h3>
-        <div>
-          <select id="suhu-cappuccino" onchange="updatePrice('cappuccino')">
-            <option value="panas">Panas</option>
-            <option value="dingin">Dingin</option>
-          </select>
-          <span id="harga-cappuccino">Rp 27.000</span>
-        </div>
-        <button onclick="addOrder('Cappuccino', getPrice('cappuccino'), getTemp('suhu-cappuccino'))">Pesan</button>
-      </div>
-
-      <!-- Americano -->
-      <div class="menu-item">
-        <h3>Americano</h3>
-        <div>
-          <select id="suhu-americano" onchange="updatePrice('americano')">
-            <option value="panas">Panas</option>
-            <option value="dingin">Dingin</option>
-          </select>
-          <span id="harga-americano">Rp 20.000</span>
-        </div>
-        <button onclick="addOrder('Americano', getPrice('americano'), getTemp('suhu-americano'))">Pesan</button>
-      </div>
-
-      <h2>MENU MAKANAN</h2>
-      <div class="menu-item">
-        <h3>Roti Bakar Coklat Keju</h3>
-        <span>Rp 18.000</span>
-        <button onclick="addOrder('Roti Bakar Coklat Keju',18000)">Pesan</button>
-      </div>
-      <div class="menu-item">
-        <h3>French Fries</h3>
-        <span>Rp 15.000</span>
-        <button onclick="addOrder('French Fries',15000)">Pesan</button>
-      </div>
-      <div class="menu-item">
-        <h3>Mie Goreng Spesial</h3>
-        <span>Rp 22.000</span>
-        <button onclick="addOrder('Mie Goreng Spesial',22000)">Pesan</button>
-      </div>
-      <div class="menu-item">
-        <h3>Chicken Wings</h3>
-        <span>Rp 29.000</span>
-        <button onclick="addOrder('Chicken Wings',29000)">Pesan</button>
-      </div>
-    </div>
-
-    <!-- Form Kanan -->
-    <div class="form-column">
-      <h2>Form Pemesanan</h2>
-      <label>Nama Pemesan:</label>
-      <input type="text" id="nama" placeholder="Masukkan nama Anda">
-      <label>Nomor Meja / Alamat:</label>
-      <input type="text" id="alamat" placeholder="Nomor meja atau alamat">
-
-      <h3>Pesanan Anda:</h3>
-      <ul id="orderList"></ul>
-      <p class="total">Total: Rp <span id="totalHarga">0</span></p>
-
-      <button class="btn-submit" onclick="submitOrder()">Kirim Pesanan</button>
-    </div>
-  </section>
+  <p id="status"></p>
 
   <script>
-    // === KONFIGURASI GOOGLE SCRIPT ===
     const scriptURL = "https://script.google.com/macros/s/AKfycbySTJrdeF_niXCu0yF0zj8Lo0ozbt9LyZfoCrVdICvfXfXCACPEc714EV3cwWnO940W/exec";
 
-    // Harga berbeda untuk panas/dingin
-    const drinkPrices = {
-      espresso: { panas: 18000, dingin: 20000 },
-      latte: { panas: 25000, dingin: 27000 },
-      cappuccino: { panas: 27000, dingin: 29000 },
-      americano: { panas: 20000, dingin: 22000 }
-    };
-
-    let orders = [];
-    let total = 0;
-
-    function getTemp(id) {
-      return document.getElementById(id).value;
-    }
-
-    function getPrice(name) {
-      const temp = document.getElementById(`suhu-${name}`).value;
-      return drinkPrices[name][temp];
-    }
-
-    function updatePrice(name) {
-      const temp = document.getElementById(`suhu-${name}`).value;
-      const harga = drinkPrices[name][temp];
-      document.getElementById(`harga-${name}`).innerText = `Rp ${harga.toLocaleString()}`;
-    }
-
-    function addOrder(nama, harga, suhu = "") {
-      const item = suhu ? `${nama} (${suhu})` : nama;
-      orders.push({ nama: item, harga });
-      total += harga;
-      renderOrderList();
-    }
-
-    function removeOrder(index) {
-      total -= orders[index].harga;
-      orders.splice(index, 1);
-      renderOrderList();
-    }
-
-    function renderOrderList() {
-      const list = document.getElementById("orderList");
-      list.innerHTML = "";
-      orders.forEach((order, i) => {
-        const li = document.createElement("li");
-        li.innerHTML = `${order.nama} - Rp ${order.harga.toLocaleString()} <button onclick="removeOrder(${i})">Hapus</button>`;
-        list.appendChild(li);
-      });
-      document.getElementById("totalHarga").innerText = total.toLocaleString();
-    }
-
-    async function submitOrder() {
-      const nama = document.getElementById("nama").value;
-      const alamat = document.getElementById("alamat").value;
-      if (!nama || !alamat || orders.length === 0) {
-        alert("Lengkapi data dan pesanan Anda terlebih dahulu!");
-        return;
-      }
+    document.getElementById("formPesanan").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
       const data = {
-        nama,
-        alamat,
-        pesanan: orders.map(o => o.nama).join(", "),
-        total
+        nama: document.getElementById("nama").value,
+        alamat: document.getElementById("alamat").value,
+        pesanan: document.getElementById("pesanan").value,
+        total: document.getElementById("total").value
       };
+
+      document.getElementById("status").innerText = "Mengirim data...";
 
       try {
         const response = await fetch(scriptURL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          mode: "cors", // penting biar aman di HP
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify(data)
         });
-        const result = await response.text();
-        alert(result);
-        orders = [];
-        total = 0;
-        renderOrderList();
+
+        const text = await response.text();
+        document.getElementById("status").innerText = text;
+
+        // Reset form setelah sukses
+        e.target.reset();
       } catch (err) {
-        alert("Gagal mengirim pesanan: " + err.message);
+        console.error(err);
+        document.getElementById("status").innerText = "Gagal kirim data. Periksa koneksi atau izin Google Script.";
       }
-    }
+    });
   </script>
 </body>
 </html>
