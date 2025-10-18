@@ -3,82 +3,139 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Pesanan</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f2f2f2;
-    }
-    form {
-      background: #fff;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    input, textarea, button {
-      display: block;
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #28a745;
-      color: white;
-      font-weight: bold;
-    }
-  </style>
+  <title>NUM Coffee</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- ========== HALAMAN ATAS (HERO) ========== -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>NUM COFFEE</h1>
+      <p>Dare to Brew Different</p>
+      <a href="#menu" class="btn">Order Now</a>
+    </div>
+  </section>
 
-  <h2>Form Pemesanan</h2>
-  <form id="formPesanan">
-    <input type="text" id="nama" placeholder="Nama" required>
-    <input type="text" id="alamat" placeholder="Alamat" required>
-    <textarea id="pesanan" placeholder="Pesanan (pisahkan dengan koma)" required></textarea>
-    <input type="number" id="total" placeholder="Total Harga" required>
-    <button type="submit">Kirim Pesanan</button>
-  </form>
+  <!-- ========== MENU & FORM PEMESANAN ========== -->
+  <section id="menu" class="menu-layout">
+    <!-- Menu Kiri -->
+    <div class="menu-column">
+      <h2>MENU MINUMAN</h2>
+      <div class="menu-item">
+        <h3>Espresso</h3>
+        <span>Rp 18.000</span>
+        <button onclick="addOrder('Espresso',18000)">Pesan</button>
+      </div>
+      <div class="menu-item">
+        <h3>Latte</h3>
+        <span>Rp 25.000</span>
+        <button onclick="addOrder('Latte',25000)">Pesan</button>
+      </div>
+      <div class="menu-item">
+        <h3>Cappuccino</h3>
+        <span>Rp 27.000</span>
+        <button onclick="addOrder('Cappuccino',27000)">Pesan</button>
+      </div>
+      <div class="menu-item">
+        <h3>Americano</h3>
+        <span>Rp 20.000</span>
+        <button onclick="addOrder('Americano',20000)">Pesan</button>
+      </div>
 
-  <p id="status"></p>
+      <h2>MENU MAKANAN</h2>
+      <div class="menu-item">
+        <h3>Roti Bakar Coklat Keju</h3>
+        <span>Rp 18.000</span>
+        <button onclick="addOrder('Roti Bakar Coklat Keju',18000)">Pesan</button>
+      </div>
+      <div class="menu-item">
+        <h3>French Fries</h3>
+        <span>Rp 15.000</span>
+        <button onclick="addOrder('French Fries',15000)">Pesan</button>
+      </div>
+      <div class="menu-item">
+        <h3>Mie Goreng Spesial</h3>
+        <span>Rp 22.000</span>
+        <button onclick="addOrder('Mie Goreng Spesial',22000)">Pesan</button>
+      </div>
+      <div class="menu-item">
+        <h3>Chicken Wings</h3>
+        <span>Rp 29.000</span>
+        <button onclick="addOrder('Chicken Wings',29000)">Pesan</button>
+      </div>
+    </div>
 
+    <!-- Form Kanan -->
+    <div class="form-column">
+      <h2>Form Pemesanan</h2>
+
+      <label>Nama Pemesan:</label>
+      <input type="text" id="nama" placeholder="Masukkan nama Anda">
+
+      <label>Nomor Meja / Alamat:</label>
+      <input type="text" id="alamat" placeholder="Nomor meja atau alamat">
+
+      <h3>Pesanan Anda:</h3>
+      <ul id="orderList"></ul>
+
+      <p class="total">Total: Rp <span id="totalPrice">0</span></p>
+      <button class="btn-submit" onclick="sendOrder()">Kirim Pesanan</button>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 NUM Coffee — Brewed with Passion ☕</p>
+  </footer>
+
+  <!-- ========== SCRIPT PEMESANAN ========== -->
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbySTJrdeF_niXCu0yF0zj8Lo0ozbt9LyZfoCrVdICvfXfXCACPEc714EV3cwWnO940W/exec";
+    let orders = [];
+    let total = 0;
 
-    document.getElementById("formPesanan").addEventListener("submit", async (e) => {
-      e.preventDefault();
+    function addOrder(name, price) {
+      orders.push({ name, price });
+      total += price;
+      updateOrderList();
+    }
 
-      const data = {
-        nama: document.getElementById("nama").value,
-        alamat: document.getElementById("alamat").value,
-        pesanan: document.getElementById("pesanan").value,
-        total: document.getElementById("total").value
-      };
+    function removeOrder(index) {
+      total -= orders[index].price;
+      orders.splice(index, 1);
+      updateOrderList();
+    }
 
-      document.getElementById("status").innerText = "Mengirim data...";
+    function updateOrderList() {
+      const list = document.getElementById("orderList");
+      list.innerHTML = "";
+      orders.forEach((order, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = 
+          ${order.name} - Rp ${order.price.toLocaleString()}
+          <button onclick="removeOrder(${index})">Hapus</button>
+        ;
+        list.appendChild(li);
+      });
+      document.getElementById("totalPrice").textContent = total.toLocaleString();
+    }
 
-      try {
-        const response = await fetch(scriptURL, {
-          method: "POST",
-          mode: "cors", // penting biar aman di HP
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
+    function sendOrder() {
+      const nama = document.getElementById("nama").value.trim();
+      const alamat = document.getElementById("alamat").value.trim();
 
-        const text = await response.text();
-        document.getElementById("status").innerText = text;
-
-        // Reset form setelah sukses
-        e.target.reset();
-      } catch (err) {
-        console.error(err);
-        document.getElementById("status").innerText = "Gagal kirim data. Periksa koneksi atau izin Google Script.";
+      if (!nama || !alamat || orders.length === 0) {
+        alert("Lengkapi data dan pilih pesanan terlebih dahulu!");
+        return;
       }
-    });
+
+      let pesanText = Halo NUM Coffee!\nSaya *${nama}* ingin memesan:\n;
+      orders.forEach(o => {
+        pesanText += - ${o.name} (Rp ${o.price.toLocaleString()})\n;
+      });
+      pesanText += \nTotal: Rp ${total.toLocaleString()}\nAlamat/Meja: ${alamat};
+
+      const waUrl = https://wa.me/+6285256936192?text=${encodeURIComponent(pesanText)};
+      window.open(waUrl, "_blank");
+    }
   </script>
 </body>
 </html>
