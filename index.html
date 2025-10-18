@@ -113,8 +113,10 @@
     </div>
   </section>
 
+  <!-- SCRIPT JAVASCRIPT -->
   <script>
-    // Harga berbeda untuk panas/dingin
+    const scriptURL = "https://script.google.com/macros/s/AKfycbx0rJHfZzI0puUWSHaIcSwaV0g0-UfX62uvtRIsoM9Y_haPzetQlPt_nwMiptkRLOFz/exec";
+
     const drinkPrices = {
       espresso: { panas: 18000, dingin: 20000 },
       latte: { panas: 25000, dingin: 27000 },
@@ -164,14 +166,42 @@
       document.getElementById("totalHarga").innerText = total.toLocaleString();
     }
 
-    function submitOrder() {
+    async function submitOrder() {
       const nama = document.getElementById("nama").value;
       const alamat = document.getElementById("alamat").value;
+
       if (!nama || !alamat || orders.length === 0) {
         alert("Lengkapi data dan pesanan Anda terlebih dahulu!");
         return;
       }
-      alert(`Terima kasih ${nama}! Pesanan Anda sudah diterima.\nTotal: Rp ${total.toLocaleString()}`);
+
+      const data = {
+        nama,
+        alamat,
+        pesanan: orders.map(o => o.nama).join(", "),
+        total
+      };
+
+      try {
+        const response = await fetch(scriptURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert(`Terima kasih ${nama}! Pesanan Anda sudah dikirim.`);
+          orders = [];
+          total = 0;
+          renderOrderList();
+          document.getElementById("nama").value = "";
+          document.getElementById("alamat").value = "";
+        } else {
+          alert("Gagal mengirim pesanan. Coba lagi.");
+        }
+      } catch (err) {
+        alert("Terjadi kesalahan: " + err.message);
+      }
     }
   </script>
 </body>
