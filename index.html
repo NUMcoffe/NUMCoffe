@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
   <title>NUM Coffee</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -22,7 +22,6 @@
     <div class="menu-column">
       <h2>MENU MINUMAN</h2>
 
-      <!-- Espresso -->
       <div class="menu-item">
         <h3>Espresso</h3>
         <div>
@@ -32,10 +31,9 @@
           </select>
           <span id="harga-espresso">Rp 18.000</span>
         </div>
-        <button onclick="addOrder('Espresso', getPrice('espresso'), getTemp('suhu-espresso'))">Pesan</button>
+        <button type="button" onclick="addOrder('Espresso', getPrice('espresso'), getTemp('suhu-espresso'))">Pesan</button>
       </div>
 
-      <!-- Latte -->
       <div class="menu-item">
         <h3>Latte</h3>
         <div>
@@ -45,10 +43,9 @@
           </select>
           <span id="harga-latte">Rp 25.000</span>
         </div>
-        <button onclick="addOrder('Latte', getPrice('latte'), getTemp('suhu-latte'))">Pesan</button>
+        <button type="button" onclick="addOrder('Latte', getPrice('latte'), getTemp('suhu-latte'))">Pesan</button>
       </div>
 
-      <!-- Cappuccino -->
       <div class="menu-item">
         <h3>Cappuccino</h3>
         <div>
@@ -58,10 +55,9 @@
           </select>
           <span id="harga-cappuccino">Rp 27.000</span>
         </div>
-        <button onclick="addOrder('Cappuccino', getPrice('cappuccino'), getTemp('suhu-cappuccino'))">Pesan</button>
+        <button type="button" onclick="addOrder('Cappuccino', getPrice('cappuccino'), getTemp('suhu-cappuccino'))">Pesan</button>
       </div>
 
-      <!-- Americano -->
       <div class="menu-item">
         <h3>Americano</h3>
         <div>
@@ -71,29 +67,29 @@
           </select>
           <span id="harga-americano">Rp 20.000</span>
         </div>
-        <button onclick="addOrder('Americano', getPrice('americano'), getTemp('suhu-americano'))">Pesan</button>
+        <button type="button" onclick="addOrder('Americano', getPrice('americano'), getTemp('suhu-americano'))">Pesan</button>
       </div>
 
       <h2>MENU MAKANAN</h2>
       <div class="menu-item">
         <h3>Roti Bakar Coklat Keju</h3>
         <span>Rp 18.000</span>
-        <button onclick="addOrder('Roti Bakar Coklat Keju',18000)">Pesan</button>
+        <button type="button" onclick="addOrder('Roti Bakar Coklat Keju',18000)">Pesan</button>
       </div>
       <div class="menu-item">
         <h3>French Fries</h3>
         <span>Rp 15.000</span>
-        <button onclick="addOrder('French Fries',15000)">Pesan</button>
+        <button type="button" onclick="addOrder('French Fries',15000)">Pesan</button>
       </div>
       <div class="menu-item">
         <h3>Mie Goreng Spesial</h3>
         <span>Rp 22.000</span>
-        <button onclick="addOrder('Mie Goreng Spesial',22000)">Pesan</button>
+        <button type="button" onclick="addOrder('Mie Goreng Spesial',22000)">Pesan</button>
       </div>
       <div class="menu-item">
         <h3>Chicken Wings</h3>
         <span>Rp 29.000</span>
-        <button onclick="addOrder('Chicken Wings',29000)">Pesan</button>
+        <button type="button" onclick="addOrder('Chicken Wings',29000)">Pesan</button>
       </div>
     </div>
 
@@ -109,7 +105,7 @@
       <ul id="orderList"></ul>
       <p class="total">Total: Rp <span id="totalHarga">0</span></p>
 
-      <button class="btn-submit" onclick="submitOrder()">Kirim Pesanan</button>
+      <button type="button" class="btn-submit" onclick="submitOrder()">Kirim Pesanan</button>
     </div>
   </section>
 
@@ -118,7 +114,6 @@
   </footer>
 
   <script>
-    // Harga berbeda untuk panas/dingin
     const drinkPrices = {
       espresso: { panas: 18000, dingin: 20000 },
       latte: { panas: 25000, dingin: 27000 },
@@ -162,7 +157,7 @@
       list.innerHTML = "";
       orders.forEach((order, i) => {
         const li = document.createElement("li");
-        li.innerHTML = `${order.nama} - Rp ${order.harga.toLocaleString()} <button onclick="removeOrder(${i})">Hapus</button>`;
+        li.innerHTML = `${order.nama} - Rp ${order.harga.toLocaleString()} <button type="button" onclick="removeOrder(${i})">Hapus</button>`;
         list.appendChild(li);
       });
       document.getElementById("totalHarga").innerText = total.toLocaleString();
@@ -175,7 +170,6 @@
         alert("Lengkapi data dan pesanan Anda terlebih dahulu!");
         return;
       }
-
       alert(`Terima kasih ${nama}! Pesanan Anda sudah diterima.\nTotal: Rp ${total.toLocaleString()}`);
     }
   </script>
