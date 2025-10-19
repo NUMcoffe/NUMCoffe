@@ -23,27 +23,27 @@
       <h2>MENU MINUMAN</h2>
 
       <div class="menu-item">
-        <h3>Espresso</h3>
+        <h3>Cafe Latte</h3>
         <div>
-          <select id="suhu-espresso" onchange="updatePrice('espresso')">
+          <select id="suhu-cafelatte" onchange="updatePrice('cafelatte')">
             <option value="panas">Panas</option>
             <option value="dingin">Dingin</option>
           </select>
-          <span id="harga-espresso">Rp 18.000</span>
+          <span id="harga-cafelatte">Rp 18.000</span>
         </div>
-        <button type="button" onclick="addOrder('Espresso', getPrice('espresso'), getTemp('suhu-espresso'))">Pesan</button>
+        <button type="button" onclick="addOrder('Cafe Latte', getPrice('cafelatte'), getTemp('suhu-cafelatte'))">Pesan</button>
       </div>
 
       <div class="menu-item">
-        <h3>Latte</h3>
+        <h3>Vanila</h3>
         <div>
-          <select id="suhu-latte" onchange="updatePrice('latte')">
+          <select id="suhu-vanila" onchange="updatePrice('vanila')">
             <option value="panas">Panas</option>
             <option value="dingin">Dingin</option>
           </select>
-          <span id="harga-latte">Rp 25.000</span>
+          <span id="harga-latte">Rp 18.000</span>
         </div>
-        <button type="button" onclick="addOrder('Latte', getPrice('latte'), getTemp('suhu-latte'))">Pesan</button>
+        <button type="button" onclick="addOrder('Vanila', getPrice('vanila'), getTemp('suhu-vanila'))">Pesan</button>
       </div>
 
       <div class="menu-item">
@@ -69,6 +69,43 @@
         </div>
         <button type="button" onclick="addOrder('Americano', getPrice('americano'), getTemp('suhu-americano'))">Pesan</button>
       </div>
+
+       <div class="menu-item">
+        <h3>Americano</h3>
+        <div>
+          <select id="suhu-americano" onchange="updatePrice('americano')">
+            <option value="panas">Panas</option>
+            <option value="dingin">Dingin</option>
+          </select>
+          <span id="harga-americano">Rp 20.000</span>
+        </div>
+        <button type="button" onclick="addOrder('Americano', getPrice('americano'), getTemp('suhu-americano'))">Pesan</button>
+      </div>
+
+       <div class="menu-item">
+        <h3>Americano</h3>
+        <div>
+          <select id="suhu-americano" onchange="updatePrice('americano')">
+            <option value="panas">Panas</option>
+            <option value="dingin">Dingin</option>
+          </select>
+          <span id="harga-americano">Rp 20.000</span>
+        </div>
+        <button type="button" onclick="addOrder('Americano', getPrice('americano'), getTemp('suhu-americano'))">Pesan</button>
+      </div>
+
+       <div class="menu-item">
+        <h3>Americano</h3>
+        <div>
+          <select id="suhu-americano" onchange="updatePrice('americano')">
+            <option value="panas">Panas</option>
+            <option value="dingin">Dingin</option>
+          </select>
+          <span id="harga-americano">Rp 20.000</span>
+        </div>
+        <button type="button" onclick="addOrder('Americano', getPrice('americano'), getTemp('suhu-americano'))">Pesan</button>
+      </div>
+     
 
       <h2>MENU MAKANAN</h2>
       <div class="menu-item">
@@ -114,10 +151,15 @@
   </footer>
 
   <script>
+    // Daftar harga
     const drinkPrices = {
-      espresso: { panas: 18000, dingin: 20000 },
-      latte: { panas: 25000, dingin: 27000 },
-      cappuccino: { panas: 27000, dingin: 29000 },
+      caffelatte: { panas: 18000, dingin: 20000 },
+      vanila: { panas: 25000, dingin: 27000 },
+      caramel: { panas: 27000, dingin: 29000 },
+      caramelmachiato: { panas: 20000, dingin: 22000 }
+      butterscotch: { panas: 18000, dingin: 20000 },
+      regalo: { panas: 25000, dingin: 27000 },
+      spanish: { panas: 27000, dingin: 29000 },
       americano: { panas: 20000, dingin: 22000 }
     };
 
@@ -164,13 +206,29 @@
     }
 
     function submitOrder() {
-      const nama = document.getElementById("nama").value;
-      const alamat = document.getElementById("alamat").value;
+      const nama = document.getElementById("nama").value.trim();
+      const alamat = document.getElementById("alamat").value.trim();
+
       if (!nama || !alamat || orders.length === 0) {
         alert("Lengkapi data dan pesanan Anda terlebih dahulu!");
         return;
       }
-      alert(`Terima kasih ${nama}! Pesanan Anda sudah diterima.\nTotal: Rp ${total.toLocaleString()}`);
+
+      const nomorWA = "6281234567890"; // GANTI DENGAN NOMOR TOKO KAMU
+      let pesan = `*NUM Coffee Order*%0A`;
+      pesan += `Nama: ${nama}%0A`;
+      pesan += `Meja/Alamat: ${alamat}%0A%0A`;
+      pesan += `*Pesanan:*%0A`;
+
+      orders.forEach(o => {
+        pesan += `- ${o.nama}: Rp ${o.harga.toLocaleString()}%0A`;
+      });
+
+      pesan += `%0A*Total:* Rp ${total.toLocaleString()}%0A%0A`;
+      pesan += `Terima kasih telah memesan di NUM Coffee ☕`;
+
+      const waUrl = `https://wa.me/${nomorWA}?text=${pesan}`;
+      window.open(waUrl, "_blank");
     }
   </script>
 </body>
