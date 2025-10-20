@@ -21,15 +21,12 @@
     <!-- Menu Kiri -->
     <div class="menu-column">
       <h2>COFFEE</h2>
-
       <div id="coffee-menu"></div>
 
       <h2>NON COFFEE</h2>
-
       <div id="noncoffee-menu"></div>
 
       <h2>MAKANAN</h2>
-
       <div id="food-menu"></div>
     </div>
 
@@ -45,7 +42,7 @@
       <ul id="orderList"></ul>
       <p class="total">Total: Rp <span id="totalHarga">0</span></p>
 
-      <button type="button" class="btn-submit" onclick="submitOrder()">Kirim ke WhatsApp</button>
+      <button type="button" class="btn-submit" onclick="submitOrder()">Kirim Pesanan</button>
     </div>
   </section>
 
@@ -69,7 +66,6 @@
       { nama: "Kopi Susu", hargaPanas: 15000, hargaDingin: 17000 },
       { nama: "Kopi Susu Gula Aren", hargaPanas: 20000, hargaDingin: 22000 },
       { nama: "Salted Caramel", hargaPanas: 20000, hargaDingin: 22000 },
-      
     ];
 
     const nonCoffeeMenu = [
@@ -169,24 +165,46 @@
       document.getElementById("totalHarga").innerText = total.toLocaleString();
     }
 
-    // ========== KIRIM KE WHATSAPP ==========
-    function submitOrder() {
-      const nama = document.getElementById("nama").value;
-      const alamat = document.getElementById("alamat").value;
-      if (!nama || !alamat || orders.length === 0) {
-        alert("Lengkapi data dan pesanan Anda terlebih dahulu!");
+    // ========== KIRIM KE GOOGLE SHEET ==========
+    async function submitOrder() {
+      const nama = document.getElementById("nama").value.trim();
+      const notes = document.getElementById("alamat").value.trim();
+      if (!nama || orders.length === 0) {
+        alert("Lengkapi nama dan pesanan Anda!");
         return;
       }
 
-      let pesan = ` NUM Coffee! Npa Tpunya:\n\n`;
-      orders.forEach((o, i) => {
-        pesan += `${i + 1}. ${o.nama} - Rp ${o.harga.toLocaleString()}\n`;
-      });
-      pesan += `\nTotal: Rp ${total.toLocaleString()}\n\nAtas nama: ${nama}\nMeja/Alamat: ${alamat}`;
-      
-      const encoded = encodeURIComponent(pesan);
-      const waNumber = "6282251855949"; // Ganti ke nomor WA kamu
-      window.open(`https://wa.me/${6282251855949}?text=${encoded}`, "_blank");
+      const waktu = new Date().toLocaleString("id-ID");
+      const pesananText = orders.map(o => `${o.nama} - Rp ${o.harga.toLocaleString()}`).join(", ");
+      const data = {
+        nama: nama,
+        notes: notes,
+        pesanan: pesananText,
+        total: total,
+        waktu: waktu
+      };
+
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbxtbxVUjWC6NSpfn3tkKTiDQW3fG5EkXISbZi2sv0LSHZECbJy1S72rBJE7qKDFQfM/exec", {
+          method: "POST",
+          mode: "cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert("Pesanan berhasil dikirim!");
+          orders = [];
+          total = 0;
+          renderOrderList();
+          document.getElementById("nama").value = "";
+          document.getElementById("alamat").value = "";
+        } else {
+          alert("Gagal mengirim pesanan, coba lagi!");
+        }
+      } catch (e) {
+        alert("Koneksi gagal, pastikan internet aktif.");
+      }
     }
   </script>
 </body>
