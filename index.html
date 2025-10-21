@@ -185,25 +185,22 @@
       };
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbxtbxVUjWC6NSpfn3tkKTiDQW3fG5EkXISbZi2sv0LSHZECbJy1S72rBJE7qKDFQfM/exec", {
+        await fetch("https://script.google.com/macros/s/AKfycbxtbxVUjWC6NSpfn3tkKTiDQW3fG5EkXISbZi2sv0LSHZECbJy1S72rBJE7qKDFQfM/exec", {
           method: "POST",
-          mode: "cors",
+          mode: "no-cors",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
         });
 
-        if (response.ok) {
-          alert("Pesanan berhasil dikirim!");
-          orders = [];
-          total = 0;
-          renderOrderList();
-          document.getElementById("nama").value = "";
-          document.getElementById("alamat").value = "";
-        } else {
-          alert("Gagal mengirim pesanan, coba lagi!");
-        }
-      } catch (e) {
-        alert("Koneksi gagal, pastikan internet aktif.");
+        alert("✅ Pesanan berhasil dikirim!");
+        orders = [];
+        total = 0;
+        renderOrderList();
+        document.getElementById("nama").value = "";
+        document.getElementById("alamat").value = "";
+      } catch (error) {
+        console.error("Error:", error);
+        alert("⚠️ Gagal mengirim pesanan. Coba lagi!");
       }
     }
   </script>
