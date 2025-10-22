@@ -35,9 +35,8 @@
       <h2>Form Pemesanan</h2>
       <label>Nama Pemesan:</label>
       <input type="text" id="nama" placeholder="Masukkan nama Anda">
-
       <label>Notes:</label>
-      <textarea id="catatan" rows="3" placeholder="Tambahkan catatan (misal: kurang manis, tanpa es, dll)"></textarea>
+      <input type="text" id="alamat" placeholder="...........">
 
       <h3>Pesanan Anda:</h3>
       <ul id="orderList"></ul>
@@ -169,27 +168,26 @@
     // ========== KIRIM KE GOOGLE SHEET ==========
     async function submitOrder() {
       const nama = document.getElementById("nama").value.trim();
-      const catatan = document.getElementById("catatan").value.trim();
-
+      const alamat = document.getElementById("alamat").value.trim();
       if (!nama || orders.length === 0) {
         alert("Lengkapi nama dan pesanan Anda!");
         return;
       }
 
       const waktu = new Date().toLocaleString("id-ID");
-      const pesanan = orders.map(o => `${o.nama} - Rp ${o.harga.toLocaleString()}`);
-
+      const pesananText = orders.map(o => `${o.nama} - Rp ${o.harga.toLocaleString()}`).join(", ");
       const data = {
         nama: nama,
-        catatan: catatan,
-        pesanan: pesanan, // dikirim dalam bentuk array agar rapi ke bawah
+        alamat: alamat,
+        pesanan: pesananText,
         total: total,
         waktu: waktu
       };
 
       try {
-        await fetch("https://script.google.com/macros/s/AKfycbwYv6OC4zvFdBUbGick83yvkVgUleoPYZxSEg5A4oigFdxfWI69IWdGcLR8GbRXex0c4w/exec", {
+        await fetch("https://script.google.com/macros/s/AKfycbwc-aJGLF-VOxNZB7j7XAcANGNYOyV6Ywvk8y8BL6cIZXnXEoGtJIsBdvJ0e6qLAl9WLA/exec", {
           method: "POST",
+          mode: "no-cors",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
         });
@@ -199,7 +197,7 @@
         total = 0;
         renderOrderList();
         document.getElementById("nama").value = "";
-        document.getElementById("catatan").value = "";
+        document.getElementById("alamat").value = "";
       } catch (error) {
         console.error("Error:", error);
         alert("⚠️ Gagal mengirim pesanan. Coba lagi!");
