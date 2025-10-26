@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- ========== HERO SECTION ========== -->
   <section class="hero">
     <div class="hero-content">
       <h1>NUM COFFEE</h1>
@@ -16,9 +15,7 @@
     </div>
   </section>
 
-  <!-- ========== MENU & FORM ========== -->
   <section id="menu" class="menu-layout">
-    <!-- Menu Kiri -->
     <div class="menu-column">
       <h2>COFFEE</h2>
       <div id="coffee-menu"></div>
@@ -30,7 +27,6 @@
       <div id="food-menu"></div>
     </div>
 
-    <!-- Form Kanan -->
     <div class="form-column">
       <h2>Form Pemesanan</h2>
       <label>Nama Pemesan:</label>
@@ -50,5 +46,155 @@
     <p>&copy; 2025 NUM Coffee — Brewed with Passion ☕</p>
   </footer>
 
-  <script>
-    // ========== DATA MENU ==========
+<script>
+// ========== DATA MENU ==========
+const coffeeMenu = [
+  { nama: "Cafe Latte", hargaPanas: 18000, hargaDingin: 20000 },
+  { nama: "Vanila", hargaPanas: 23000, hargaDingin: 25000 },
+  { nama: "Caramel", hargaPanas: 23000, hargaDingin: 25000 },
+  { nama: "Caramel Machiato", hargaPanas: 23000, hargaDingin: 25000 },
+  { nama: "Butter Scotch", hargaPanas: 18000, hargaDingin: 20000 },
+  { nama: "Regalo", hargaPanas: 20000, hargaDingin: 22000 },
+  { nama: "Spanish Latte", hargaPanas: 18000, hargaDingin: 20000 },
+  { nama: "Americano", hargaPanas: 15000, hargaDingin: 17000 },
+  { nama: "Cappuccino", hargaPanas: 20000, hargaDingin: 22000 },
+  { nama: "Mocha", hargaPanas: 20000, hargaDingin: 22000 },
+  { nama: "Kopi Susu", hargaPanas: 15000, hargaDingin: 17000 },
+  { nama: "Kopi Susu Gula Aren", hargaPanas: 20000, hargaDingin: 22000 },
+  { nama: "Salted Caramel", hargaPanas: 20000, hargaDingin: 22000 }
+];
+
+const nonCoffeeMenu = [
+  { nama: "Chocolate", hargaPanas: 20000, hargaDingin: 22000 },
+  { nama: "Matcha", hargaPanas: 20000, hargaDingin: 22000 },
+  { nama: "Sweet Tea", hargaPanas: 10000, hargaDingin: 12000 },
+  { nama: "Cookies and Cream", hargaPanas: 20000, hargaDingin: 22000 },
+  { nama: "Taro", hargaPanas: 20000, hargaDingin: 22000 },
+  { nama: "Red Velvet", hargaPanas: 20000, hargaDingin: 22000 },
+  { nama: "Camat Latte", hargaPanas: 20000, hargaDingin: 22000 }
+];
+
+const foodMenu = [
+  { nama: "Burger", harga: 20000 },
+  { nama: "Hot Dog", harga: 20000 },
+  { nama: "French Fries", harga: 15000 }
+];
+
+let orders = [];
+let total = 0;
+
+// ========== GENERATE MENU ==========
+function createDrinkMenu(menu, containerId, prefix) {
+  const container = document.getElementById(containerId);
+  menu.forEach((item, i) => {
+    const id = `${prefix}-${i}`;
+    container.innerHTML += `
+      <div class="menu-item">
+        <h3>${item.nama}</h3>
+        <select id="suhu-${id}" onchange="updatePrice('${id}', ${item.hargaPanas}, ${item.hargaDingin})">
+          <option value="panas">Panas</option>
+          <option value="dingin">Dingin</option>
+        </select>
+        <span id="harga-${id}">Rp ${item.hargaPanas.toLocaleString()}</span>
+        <button onclick="addOrder('${item.nama}', getPrice('${id}', ${item.hargaPanas}, ${item.hargaDingin}), getTemp('suhu-${id}'))">Pesan</button>
+      </div>
+    `;
+  });
+}
+
+function createFoodMenu(menu, containerId) {
+  const container = document.getElementById(containerId);
+  menu.forEach(item => {
+    container.innerHTML += `
+      <div class="menu-item">
+        <h3>${item.nama}</h3>
+        <span>Rp ${item.harga.toLocaleString()}</span>
+        <button onclick="addOrder('${item.nama}', ${item.harga})">Pesan</button>
+      </div>
+    `;
+  });
+}
+
+createDrinkMenu(coffeeMenu, "coffee-menu", "coffee");
+createDrinkMenu(nonCoffeeMenu, "noncoffee-menu", "noncoffee");
+createFoodMenu(foodMenu, "food-menu");
+
+// ========== LOGIKA ==========
+function getTemp(id) { return document.getElementById(id).value; }
+function getPrice(id, panas, dingin) {
+  return document.getElementById(`suhu-${id}`).value === "dingin" ? dingin : panas;
+}
+
+function updatePrice(id, panas, dingin) {
+  const harga = getPrice(id, panas, dingin);
+  document.getElementById(`harga-${id}`).innerText = `Rp ${harga.toLocaleString()}`;
+}
+
+function addOrder(nama, harga, suhu = "") {
+  const item = suhu ? `${nama} (${suhu})` : nama;
+  orders.push({ nama: item, harga });
+  total += harga;
+  renderOrderList();
+}
+
+function removeOrder(i) {
+  total -= orders[i].harga;
+  orders.splice(i, 1);
+  renderOrderList();
+}
+
+function renderOrderList() {
+  const list = document.getElementById("orderList");
+  list.innerHTML = "";
+  orders.forEach((order, i) => {
+    list.innerHTML += `
+      <li>${order.nama} - Rp ${order.harga.toLocaleString()}
+        <button onclick="removeOrder(${i})">Hapus</button>
+      </li>`;
+  });
+  document.getElementById("totalHarga").innerText = total.toLocaleString();
+}
+
+// ✅ KIRIM RAPI PER ITEM KE SHEET
+async function submitOrder() {
+  const nama = document.getElementById("nama").value.trim();
+  const notes = document.getElementById("alamat").value.trim();
+
+  if (!nama || orders.length === 0) {
+    alert("Lengkapi nama dan pesanan Anda!");
+    return;
+  }
+
+  const data = {
+    nama,
+    notes,
+    pesanan: orders.map(o => o.nama),
+    harga: orders.map(o => o.harga),
+    total,
+    waktu: new Date().toLocaleString("id-ID")
+  };
+
+  try {
+    await fetch("https://script.google.com/macros/s/AKfycbwc-aJGLF-VOxNZB7j7XAcANGNYOyV6Ywvk8y8BL6cIZXnXEoGtJIsBdvJ0e6qLAl9WLA/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    alert("✅ Pesanan berhasil dikirim!");
+
+    orders = [];
+    total = 0;
+    renderOrderList();
+    document.getElementById("nama").value = "";
+    document.getElementById("alamat").value = "";
+
+  } catch (err) {
+    console.log(err);
+    alert("⚠️ Gagal mengirim pesanan");
+  }
+}
+</script>
+</body>
+</html>
